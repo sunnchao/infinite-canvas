@@ -26,6 +26,28 @@ test("importing credentials returns the channel so its models can be fetched", (
     expect(result.channel?.baseUrl).toBe("https://api.example.com/v1");
 });
 
+test("re-importing the same provider clears its cached models and keeps the channel", () => {
+    const existing = {
+        id: "imported",
+        name: "My provider",
+        baseUrl: "https://api.example.com/v1",
+        apiKey: "old-key",
+        apiFormat: "openai" as const,
+        models: [{ name: "stale-model", capability: "image" as const }],
+    };
+    const config = { ...defaultConfig, channels: [existing], models: [encodeChannelModel("imported", "stale-model")] };
+
+    const result = upsertChannelCredentials(config, { baseUrl: "https://api.example.com/", apiKey: "new-key" });
+
+    expect(result.status).toBe("updated");
+    expect(result.channel?.id).toBe("imported");
+    expect(result.channel?.name).toBe("My provider");
+    expect(result.channel?.apiKey).toBe("new-key");
+    expect(result.channel?.models).toEqual([]);
+    expect(result.config.channels).toHaveLength(1);
+    expect(result.config.models).toEqual([]);
+});
+
 test("fetched models merge into the imported channel without losing configured ones", () => {
     const channel = {
         id: "imported",

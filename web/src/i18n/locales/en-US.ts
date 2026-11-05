@@ -473,7 +473,7 @@ export default {
         imported: "Settings and preferences imported",
         importedDirectConfig: "Local direct connection settings imported",
         importedChannelCreated: "Added provider “{{name}}” without changing existing providers",
-        importedChannelUpdated: "Updated connection settings for provider “{{name}}”",
+        importedChannelUpdated: "Provider “{{name}}” was reset",
         importedChannelBaseUrlRequired: "The import link has no Base URL. No providers were changed.",
         importedChannelBaseUrlInvalid: "The import link has an invalid Base URL. No providers were changed.",
         importedChannelModels: "Fetched and selected {{count}} models for “{{name}}”",

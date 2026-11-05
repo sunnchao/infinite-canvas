@@ -473,7 +473,7 @@ export default {
         imported: "配置与用户偏好已导入",
         importedDirectConfig: "已导入本地直连配置",
         importedChannelCreated: "已新增渠道“{{name}}”，原有渠道未改动",
-        importedChannelUpdated: "已更新渠道“{{name}}”的连接配置",
+        importedChannelUpdated: "已重置渠道“{{name}}”的配置",
         importedChannelBaseUrlRequired: "导入链接缺少 Base URL，未修改任何渠道",
         importedChannelBaseUrlInvalid: "导入链接中的 Base URL 无效，未修改任何渠道",
         importedChannelModels: "已为“{{name}}”拉取并勾选 {{count}} 个模型",

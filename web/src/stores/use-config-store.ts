@@ -342,26 +342,25 @@ export function upsertChannelCredentials(
 
     const baseUrl = normalizeImportedBaseUrl(rawBaseUrl);
     const apiKey = input.apiKey?.trim() || "";
-    const matchingIndex = config.channels.findIndex((channel) => normalizedBaseUrlKey(channel.baseUrl) === normalizedBaseUrlKey(baseUrl));
+    const baseUrlKey = normalizedBaseUrlKey(baseUrl);
+    const existing = config.channels.find((channel) => normalizedBaseUrlKey(channel.baseUrl) === baseUrlKey);
 
-    if (matchingIndex >= 0) {
-        const existing = config.channels[matchingIndex];
-        if (existing.baseUrl === baseUrl && (!apiKey || existing.apiKey === apiKey)) {
-            return { status: "updated", channelName: existing.name, channel: existing, config };
-        }
-        const updated = { ...existing, baseUrl, ...(apiKey ? { apiKey } : {}) };
-        const channels = config.channels.map((channel, index) => (index === matchingIndex ? updated : channel));
-        return { status: "updated", channelName: existing.name, channel: updated, config: { ...config, channels } };
-    }
-
+    // Re-importing a provider link rebuilds its cached configuration instead of reusing stale models.
     const channel = createModelChannel({
-        name: importedChannelName(baseUrl),
+        id: existing?.id,
+        name: existing?.name || importedChannelName(baseUrl),
         baseUrl,
-        apiKey,
-        apiFormat: "openai",
+        apiKey: apiKey || existing?.apiKey,
+        apiFormat: existing?.apiFormat || "openai",
         models: [],
     });
-    return { status: "created", channelName: channel.name, channel, config: { ...config, channels: [...config.channels, channel] } };
+    const channels = existing ? config.channels.map((item) => (item.id === existing.id ? channel : item)) : [...config.channels, channel];
+    return {
+        status: existing ? "updated" : "created",
+        channelName: channel.name,
+        channel,
+        config: { ...config, channels, models: modelOptionsFromChannels(channels) },
+    };
 }
 
 function isHttpBaseUrl(baseUrl: string) {
