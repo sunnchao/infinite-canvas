@@ -476,6 +476,8 @@ export default {
         importedChannelUpdated: "已更新渠道“{{name}}”的连接配置",
         importedChannelBaseUrlRequired: "导入链接缺少 Base URL，未修改任何渠道",
         importedChannelBaseUrlInvalid: "导入链接中的 Base URL 无效，未修改任何渠道",
+        importedChannelModels: "已为“{{name}}”拉取并勾选 {{count}} 个模型",
+        importedChannelModelsFailed: "渠道“{{name}}”已保存，但拉取模型失败，请在渠道设置中手动拉取",
         importFailed: "配置文件读取失败",
         saved: "配置已保存",
         savedContinue: "配置已保存，请继续刚才的请求",

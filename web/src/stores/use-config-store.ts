@@ -70,6 +70,7 @@ export type ConfigTabKey = "channels" | "local-proxy" | "preferences" | "prompt-
 export type ChannelCredentialsImportResult = {
     status: "created" | "updated" | "missing-base-url" | "invalid-base-url";
     channelName?: string;
+    channel?: ModelChannel;
 };
 
 export const CONFIG_STORE_KEY = "infinite-canvas:ai_config_store";
@@ -143,6 +144,7 @@ type ConfigStore = {
     shouldPromptContinue: boolean;
     updateConfig: <K extends keyof AiConfig>(key: K, value: AiConfig[K]) => void;
     importChannelCredentials: (input: { baseUrl?: string | null; apiKey?: string | null }) => ChannelCredentialsImportResult;
+    mergeChannelModels: (channelId: string, names: string[]) => void;
     updateWebdavConfig: <K extends keyof WebdavSyncConfig>(key: K, value: WebdavSyncConfig[K]) => void;
     isAiConfigReady: (config: AiConfig, model: string) => boolean;
     openConfigDialog: (shouldPromptContinue?: boolean, tab?: ConfigTabKey) => void;
@@ -231,8 +233,15 @@ export const useConfigStore = create<ConfigStore>()(
                 const currentConfig = get().config;
                 const result = upsertChannelCredentials(currentConfig, input);
                 if (result.config !== currentConfig) set({ config: result.config });
-                return { status: result.status, channelName: result.channelName };
+                return { status: result.status, channelName: result.channelName, channel: result.channel };
             },
+            mergeChannelModels: (channelId, names) =>
+                set((state) => {
+                    const channels = state.config.channels.map((channel) =>
+                        channel.id === channelId ? { ...channel, models: normalizeChannelModels([...channel.models, ...names]) } : channel,
+                    );
+                    return { config: { ...state.config, channels, models: modelOptionsFromChannels(channels) } };
+                }),
             updateWebdavConfig: (key, value) =>
                 set((state) => ({
                     webdav: {
@@ -338,11 +347,11 @@ export function upsertChannelCredentials(
     if (matchingIndex >= 0) {
         const existing = config.channels[matchingIndex];
         if (existing.baseUrl === baseUrl && (!apiKey || existing.apiKey === apiKey)) {
-            return { status: "updated", channelName: existing.name, config };
+            return { status: "updated", channelName: existing.name, channel: existing, config };
         }
         const updated = { ...existing, baseUrl, ...(apiKey ? { apiKey } : {}) };
         const channels = config.channels.map((channel, index) => (index === matchingIndex ? updated : channel));
-        return { status: "updated", channelName: existing.name, config: { ...config, channels } };
+        return { status: "updated", channelName: existing.name, channel: updated, config: { ...config, channels } };
     }
 
     const channel = createModelChannel({
@@ -352,7 +361,7 @@ export function upsertChannelCredentials(
         apiFormat: "openai",
         models: [],
     });
-    return { status: "created", channelName: channel.name, config: { ...config, channels: [...config.channels, channel] } };
+    return { status: "created", channelName: channel.name, channel, config: { ...config, channels: [...config.channels, channel] } };
 }
 
 function isHttpBaseUrl(baseUrl: string) {

@@ -17,7 +17,7 @@ export function AppTopNav() {
     const [mobileNavOpen, setMobileNavOpen] = useState(false);
     const autoConnectRef = useRef(false);
     const agentToken = useAgentStore((state) => state.token);
-    const agentEnabled = useAgentStore((state) => state.enabled);
+    const agentEnabled =  useAgentStore((state) => state.enabled);
     const agentConnected = useAgentStore((state) => state.connected);
     const connectAgent = useAgentStore((state) => state.connectAgent);
     const togglePanel = useAgentStore((state) => state.togglePanel);
@@ -83,9 +83,9 @@ export function AppTopNav() {
                         </div>
 
                         <div className="my-auto flex h-9 min-w-0 items-center justify-end gap-2 justify-self-end whitespace-nowrap">
-                            <Tooltip title={t(panelOpen ? "topNav.closeAgent" : "topNav.openAgent")}>
+                            {/* <Tooltip title={t(panelOpen ? "topNav.closeAgent" : "topNav.openAgent")}>
                                 <Button type="text" shape="circle" className="!h-8 !w-8 !min-w-8" icon={<Bot className="size-4" />} onClick={togglePanel} aria-label={t(panelOpen ? "topNav.closeAgent" : "topNav.openAgent")} />
-                            </Tooltip>
+                            </Tooltip> */}
                             <UserStatusActions />
                         </div>
                     </div>

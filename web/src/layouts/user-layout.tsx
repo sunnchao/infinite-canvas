@@ -10,7 +10,7 @@ export default function UserLayout({ children }: { children: ReactNode }) {
                 <AppTopNav />
                 <div className="min-h-0 flex-1 overflow-hidden">{children}</div>
             </div>
-            <AgentPanel />
+            {/* <AgentPanel /> */}
         </div>
     );
 }

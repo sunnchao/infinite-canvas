@@ -476,6 +476,8 @@ export default {
         importedChannelUpdated: "Updated connection settings for provider “{{name}}”",
         importedChannelBaseUrlRequired: "The import link has no Base URL. No providers were changed.",
         importedChannelBaseUrlInvalid: "The import link has an invalid Base URL. No providers were changed.",
+        importedChannelModels: "Fetched and selected {{count}} models for “{{name}}”",
+        importedChannelModelsFailed: "Provider “{{name}}” was saved, but fetching models failed. Fetch them manually in the provider settings.",
         importFailed: "Failed to read the settings file",
         saved: "Settings saved",
         savedContinue: "Settings saved. Continue with your previous request.",
